@@ -21,7 +21,8 @@ import {
   IonTitle,
   IonDatetime,
   IonDatetimeButton,
-  IonPopover
+  IonPopover,
+  useIonToast
 
 } from '@ionic/react';
 import { add, checkmarkDoneOutline, chevronForwardOutline, closeOutline } from 'ionicons/icons'
@@ -47,7 +48,7 @@ const Tasks: React.FC<Props> = ({
   const [task, setTask] = useState({})
   const [allTasks, setAllTasks] = useState([])
 
-
+  const [presentToast] = useIonToast()
 
   const confirm = () => modal.current?.dismiss(title.current?.value, 'confirm')
 // Lida com o fechamento do modal menu
@@ -75,7 +76,10 @@ const Tasks: React.FC<Props> = ({
       }  
       await updateData(datacopy)
       }
-       else console.log('Valores invalidos')    
+       else presentToast({
+        message: 'Valores inválidos',
+        duration: 1500
+       })   
   }
 
   const removeTask = async (id: string, folder: string) => {
@@ -150,13 +154,16 @@ const Tasks: React.FC<Props> = ({
   return (
     <div>
       <IonList className="container" >
+
+        
+
         {currentList.map((item, index)=> 
         <IonItemSliding key={item.id} className={item.done === true ? 'done' : ''} >
 
           <IonItem className='task'>
             <IonLabel>
               <h2 className='taskTitle'>{item.title}</h2>
-              <p>{ format(parseISO('' + item.date), 'd MMM, yyyy')}</p>
+              <p>{item.date ? format(parseISO('' + item.date), 'd MMM, yyyy') : ''}</p>
             </IonLabel>
             {/* <IonLabel> */}
               <p>{name === 'Todos' ? `Caderno: ${item.folder}` : ''}</p>
@@ -220,6 +227,7 @@ const Tasks: React.FC<Props> = ({
 
                 <IonModal keepContentsMounted={true}>
                   <IonDatetime 
+                  showDefaultTitle={true}
                   showDefaultButtons = {true} 
                   doneText='Pronto'
                   cancelText='Cancelar'

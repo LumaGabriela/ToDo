@@ -10,7 +10,8 @@ import {
   IonInput,
   IonButtons,
   IonButton,
-  IonToolbar
+  IonToolbar,
+  useIonToast
 } from '@ionic/react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -27,6 +28,7 @@ const Menu: React.FC<Props> = ({data, updateData}) => {
 
   const input = useRef<HTMLIonInputElement>(null)
   
+  const [presentToast] = useIonToast()
 
   const addFolder =  async () => {
     if(data){
@@ -46,7 +48,10 @@ const Menu: React.FC<Props> = ({data, updateData}) => {
         datacopy.push(newfolder)
         updateData(datacopy)
       }
-      else console.log('Valor invalido!!!')
+      else presentToast({
+        message: 'Valores inválidos',
+        duration: 1500
+       }) 
   }
   
   }
