@@ -22,21 +22,38 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { useEffect, useState } from 'react';
+
+import Props from './props'
+import { useStorage } from './useStorage';
 
 setupIonicReact();
 
-const App: React.FC = () => {
+
+
+const App: React.FC<Props> = () => {
+  
+  
+ 
+  const {data, updateData} = useStorage()
+
+  
   return (
     <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId="main">
-          <Menu />
+          <Menu 
+          data={data}
+          updateData={updateData}
+           />
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
-              <Redirect to="/page/Inbox" />
+              <Redirect to="/page/Todos" />
             </Route>
             <Route path="/page/:name" exact={true}>
-              <Page />
+              <Page data={data} 
+              updateData={updateData} 
+              />
             </Route>
           </IonRouterOutlet>
         </IonSplitPane>

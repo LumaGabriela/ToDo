@@ -7,91 +7,113 @@ import {
   IonListHeader,
   IonMenu,
   IonMenuToggle,
-  IonNote,
+  IonInput,
+  IonButtons,
+  IonButton,
+  IonToolbar
 } from '@ionic/react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useLocation } from 'react-router-dom';
-import { archiveOutline, archiveSharp, bookmarkOutline, heartOutline, heartSharp, mailOutline, mailSharp, paperPlaneOutline, paperPlaneSharp, trashOutline, trashSharp, warningOutline, warningSharp } from 'ionicons/icons';
+
 import './Menu.css';
+import Props from '../props'
+import { closeOutline, addCircleSharp, folder } from 'ionicons/icons';
 
-interface AppPage {
-  url: string;
-  iosIcon: string;
-  mdIcon: string;
-  title: string;
-}
 
-const appPages: AppPage[] = [
-  {
-    title: 'Inbox',
-    url: '/page/Inbox',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp
-  },
-  {
-    title: 'Outbox',
-    url: '/page/Outbox',
-    iosIcon: paperPlaneOutline,
-    mdIcon: paperPlaneSharp
-  },
-  {
-    title: 'Favorites',
-    url: '/page/Favorites',
-    iosIcon: heartOutline,
-    mdIcon: heartSharp
-  },
-  {
-    title: 'Archived',
-    url: '/page/Archived',
-    iosIcon: archiveOutline,
-    mdIcon: archiveSharp
-  },
-  {
-    title: 'Trash',
-    url: '/page/Trash',
-    iosIcon: trashOutline,
-    mdIcon: trashSharp
-  },
-  {
-    title: 'Spam',
-    url: '/page/Spam',
-    iosIcon: warningOutline,
-    mdIcon: warningSharp
-  }
-];
-
-const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-
-const Menu: React.FC = () => {
+const Menu: React.FC<Props> = ({data, updateData}) => {
   const location = useLocation();
+  const [pages, setPages] = useState<any>([])
+
+  const input = useRef<HTMLIonInputElement>(null)
+  
+
+  const addFolder =  async () => {
+    if(data){
+      let datacopy = data.slice()
+      let folderTitle = input.current.value.toString()
+      
+      let newfolder = {
+        title: folderTitle,
+        id: '' + new Date().getTime(),
+        tasks: []
+      }
+
+      input.current.value = ''    
+      const result  = datacopy.every((item, index)=> item.title !== folderTitle )
+
+      if(result  && folderTitle.split('').length > 0) {
+        datacopy.push(newfolder)
+        updateData(datacopy)
+      }
+      else console.log('Valor invalido!!!')
+  }
+  
+  }
+  const removeFolder = async (title) => {
+    const datacopy = data.filter((item, index)=> item.title !== title)
+    updateData(datacopy)
+  }
+
+  useEffect(()=> {
+    if( data ){
+      const datacopy = data.slice()
+      let tempAppPages = []
+
+      for( let item of datacopy) tempAppPages.push({title : item.title, url: '/page/' + item.title})
+          
+      setPages(tempAppPages)
+    } 
+  },[data])
 
   return (
     <IonMenu contentId="main" type="overlay">
       <IonContent>
         <IonList id="inbox-list">
-          <IonListHeader>Inbox</IonListHeader>
-          <IonNote>hi@ionicframework.com</IonNote>
-          {appPages.map((appPage, index) => {
-            return (
-              <IonMenuToggle key={index} autoHide={false}>
-                <IonItem className={location.pathname === appPage.url ? 'selected' : ''} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>
-                  <IonIcon slot="start" ios={appPage.iosIcon} md={appPage.mdIcon} />
-                  <IonLabel>{appPage.title}</IonLabel>
-                </IonItem>
-              </IonMenuToggle>
-            );
-          })}
-        </IonList>
-
-        <IonList id="labels-list">
-          <IonListHeader>Labels</IonListHeader>
-          {labels.map((label, index) => (
-            <IonItem lines="none" key={index}>
-              <IonIcon slot="start" icon={bookmarkOutline} />
-              <IonLabel>{label}</IonLabel>
+          <IonListHeader>Tarefas</IonListHeader>
+          
+          <IonMenuToggle key='Todos' autoHide={false}>
+                
+            <IonItem className={location.pathname === '/page/Todos' ? 'Todos selected' : 'Todos'} routerLink={'Todos'} routerDirection="none" lines="none" detail={false}>
+              
+              <IonLabel>{'Todos'}</IonLabel>
             </IonItem>
-          ))}
+
+          </IonMenuToggle>
+          
+          {pages.map((appPage, index) => {
+            if (appPage) return (
+ 
+              <IonMenuToggle key={index} autoHide={false}>
+                <IonToolbar>
+
+                  <IonItem className={location.pathname === appPage.url ? 'folder selected' : 'folder'} routerLink={appPage.url} routerDirection="none" lines="none" detail={false}>          
+                    <IonLabel>{appPage.title}</IonLabel>
+
+                  </IonItem>
+                  
+                  <IonButtons slot='secondary'>
+                    <IonButton color='danger' onClick={() => removeFolder(appPage.title)}>
+                      <IonIcon slot='icon-only' icon={closeOutline}/>
+                    </IonButton>
+                  </IonButtons>  
+
+                </IonToolbar>
+                
+              </IonMenuToggle> 
+            )
+            })}
+          
         </IonList>
+        <IonItem className='addTaskContainer'>
+          <IonInput className='taskInput' placeholder='Novo caderno' ref={input} />
+          <IonButton className='addTaskBtn' onClick={() => addFolder()} >
+            <IonIcon className='addTaskIcon' size='large' icon={addCircleSharp}/>
+          </IonButton>
+
+        </IonItem>
+        
+
       </IonContent>
     </IonMenu>
   );

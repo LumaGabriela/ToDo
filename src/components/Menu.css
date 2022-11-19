@@ -28,7 +28,7 @@ ion-menu.md ion-list#inbox-list {
 ion-menu.md ion-list#inbox-list ion-list-header {
   font-size: 22px;
   font-weight: 600;
-  min-height: 20px;
+  margin-bottom: 1rem;
 }
 
 ion-menu.md ion-list#labels-list ion-list-header {
@@ -44,16 +44,14 @@ ion-menu.md ion-item {
   border-radius: 4px;
 }
 
-ion-menu.md ion-item.selected {
-  --background: rgba(var(--ion-color-primary-rgb), 0.14);
-}
+
 
 ion-menu.md ion-item.selected ion-icon {
-  color: var(--ion-color-primary);
+  color: #4d750c;
 }
 
 ion-menu.md ion-item ion-icon {
-  color: #616e7e;
+  color: #397eff;
 }
 
 ion-menu.md ion-item ion-label {
@@ -111,3 +109,34 @@ ion-note {
 ion-item.selected {
   --color: var(--ion-color-primary);
 } 
+
+ion-item.addTaskContainer::part(native) {
+  background: #353535;
+  margin-top: 1.3rem;
+  
+}
+ion-item::part(native) {border-radius: 10px;}
+
+ion-item.folder::part(native), ion-item.Todos::part(native) {
+  background: #353535;
+}
+
+ion-item.Todos::part(native) {margin-bottom: 1rem;}
+
+ion-item.selected::part(native) {
+  background: #213655ea !important;
+}
+
+ion-button.addTaskBtn::part(native) {
+  padding: 0; margin: 0;
+  font-size: large;
+  background: transparent; 
+  box-shadow: none;
+  display: flex;
+  border-radius: 500px;
+  
+}
+ion-icon.addTaskIcon, ion-button.addTaskBtn {
+  height: 30px; width: 30px;
+}
+ion-list-header.md {font-size: large;}
