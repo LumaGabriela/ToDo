@@ -60,7 +60,7 @@ const Tasks: React.FC<Props> = ({
       date: date.current?.value,
       done: false,
       id: '' + new Date().getTime()
-      })
+      })   
     }
   }
 
@@ -79,7 +79,8 @@ const Tasks: React.FC<Props> = ({
        else presentToast({
         message: 'Valores inválidos',
         duration: 1500
-       })   
+       })  
+     
   }
 
   const removeTask = async (id: string, folder: string) => {
@@ -110,7 +111,13 @@ const Tasks: React.FC<Props> = ({
   }
 
   const checkFieldValidity = (list:any) => {
-    for(let item in list) if(list[item] === undefined) return false
+    // for(let item in list) if(list[item] === undefined) return false
+    // return true
+    if(list.title === '') return false
+    if(list.done === undefined) return false
+    if(list.folder === undefined) return false
+    if(list.date === undefined) return false
+    if(list.id === undefined) return false
     return true
   }
 
@@ -147,7 +154,7 @@ const Tasks: React.FC<Props> = ({
     }
   },[data])
 
-  useEffect(()=>{ addTask()},[task])
+  useEffect(()=>{ if(Object.keys(task).length !== 0) {addTask()} },[task])
 
 
 
